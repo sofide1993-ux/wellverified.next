@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ROOT ACCESS // SYSTEM</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#020603;color:#00ff65;
+ font-family:Consolas,monospace;overflow:hidden;
+}
+#matrix{
+ position:fixed;inset:0;opacity:.13;z-index:0;
+}
+.container{
+ position:relative;z-index:1;min-height:100vh;
+ padding:25px;display:flex;flex-direction:column;
+ justify-content:center;align-items:center;
+}
+.logo{color:#00ff65;font-size:13px;letter-spacing:5px}
+h1{
+ color:#ff2525;text-align:center;
+ font-size:clamp(28px,6vw,55px);
+ text-shadow:0 0 20px red;
+ animation:blink 1s infinite;
+}
+@keyframes blink{50%{opacity:.5}}
+.terminal{
+ width:min(750px,96%);
+ height:280px;overflow:auto;
+ background:#020b04;border:1px solid #087b35;
+ padding:15px;box-shadow:0 0 25px #003d17;
+ font-size:13px;line-height:1.8;
+}
+.line{white-space:pre-wrap}
+.red{color:#ff2929}
+.yellow{color:#f5d547}
+.bar{
+ width:min(750px,96%);height:15px;
+ border:1px solid #00ff65;margin:20px 0 8px;
+}
+.fill{
+ width:0;height:100%;background:#00ff65;
+ box-shadow:0 0 15px #00ff65;
+ transition:width .4s;
+}
+#percent{font-size:14px}
+#alert{
+ display:none;color:red;font-size:20px;
+ text-align:center;margin:15px;
+ animation:blink .5s infinite;
+}
+button{
+ background:#063b19;color:#00ff65;
+ border:1px solid #00ff65;padding:16px 30px;
+ font:inherit;cursor:pointer;margin-top:25px;
+}
+button:hover{background:#087b35}
+#ending{display:none;text-align:center}
+#ending h1{color:#00ff65;text-shadow:0 0 25px green}
+#reveal{display:none;color:white;font-size:20px}
+.footer{font-size:10px;color:#39734d;margin-top:20px}
+</style>
+</head>
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div class="container" id="attack">
+ <div class="logo">UNKNOWN SERVER // ROOT ACCESS</div>
+ <h1>⚠ SYSTEM COMPROMISED ⚠</h1>
+ <p>Обнаружено несанкционированное подключение.</p>
+
+ <div class="terminal" id="terminal"></div>
+
+ <div class="bar"><div class="fill" id="fill"></div></div>
+ <div id="percent">DATA EXTRACTION: 0%</div>
+ <div id="alert">⚠ КРИТИЧЕСКАЯ УГРОЗА ОБНАРУЖЕНА ⚠</div>
+ <div class="footer">SIMULATED SECURITY INTERFACE // NO DATA ACCESS</div>
+</div>
+
+<div class="container" id="ending">
+ <div class="logo">CONNECTION ESTABLISHED</div>
+ <h1>ACCESS GRANTED</h1>
+ <h2>ВАШЕ УСТРОЙСТВО ЗАБЛОКИРОВАНО</h2>
+ <p>Симуляция завершена.</p>
+ <button onclick="showTruth()">РАЗБЛОКИРОВАТЬ</button>
+ <div id="reveal">
+   <h1>Неудачная попытка разблокировки</h1>
+   <p>Устройство деактивировано</p>
+   <p style="font-size:13px;color:#00ff65">
+     Передано файлов: 1835
+   </p>
+ </div>
+</div>
+
+<script>
+// Фоновая анимация
+const canvas=document.getElementById("matrix");
+const ctx=canvas.getContext("2d");
+let drops=[];
+function resize(){
+ canvas.width=innerWidth;canvas.height=innerHeight;
+ drops=Array(Math.ceil(canvas.width/18)).fill(1);
+}
+resize();window.addEventListener("resize",resize);
+function matrix(){
+ ctx.fillStyle="rgba(0,0,0,.08)";
+ ctx.fillRect(0,0,canvas.width,canvas.height);
+ ctx.fillStyle="#00ff65";ctx.font="15px monospace";
+ drops.forEach((y,i)=>{
+  ctx.fillText(Math.random()>.5?"1":"0",i*18,y*18);
+  if(y*18>canvas.height&&Math.random()>.975)drops[i]=0;
+  drops[i]++;
+ });
+}
+setInterval(matrix,45);
+
+// Терминал — только постановочные сообщения
+const lines=[
+ ["[INIT] Initializing remote session...", ""],
+ ["[SYS] Establishing encrypted channel...", ""],
+ ["[SCAN] Scanning simulated file structure...", ""],
+ ["[SCAN] Searching for personal documents...", "yellow"],
+ ["[SCAN] Simulating photo directory analysis...", ""],
+ ["[WARN] Suspicious activity detected!", "red"],
+ ["[SCAN] Simulating contact database check...", ""],
+ ["[DATA] Preparing fictional extraction report...", ""],
+ ["[WARN] SECURITY LEVEL: CRITICAL", "red"],
+ ["[SYS] Finalizing simulation...", ""],
+ ["[DONE] Simulation completed.", "yellow"]
+];
+
+let index=0,progress=0;
+const terminal=document.getElementById("terminal");
+const fill=document.getElementById("fill");
+const percent=document.getElementById("percent");
+
+function addLine(){
+ if(index>=lines.length)return;
+ const div=document.createElement("div");
+ div.className="line "+lines[index][1];
+ div.textContent=lines[index][0];
+ terminal.appendChild(div);
+ terminal.scrollTop=terminal.scrollHeight;
+ index++;
+}
+const timer=setInterval(()=>{
+ addLine();
+ progress=Math.min(progress+10,100);
+ fill.style.width=progress+"%";
+ percent.textContent="SIMULATION PROGRESS: "+progress+"%";
+
+ if(progress>=50)
+  document.getElementById("alert").style.display="block";
+
+ if(progress>=100){
+  clearInterval(timer);
+  setTimeout(()=>{
+   document.getElementById("attack").style.display="none";
+   document.getElementById("ending").style.display="flex";
+  },1800);
+ }
+},1500);
+
+function showTruth(){
+ document.getElementById("reveal").style.display="block";
+}
+</script>
+</body>
+</html> 
